@@ -160,12 +160,38 @@ def analyze_message(message: str) -> dict:
         "copilot_suggestions": suggestions
     }
 
-def get_decision_recommendation(context_data):
-    if not context_data.get("latest_entity"):
+def get_decision_recommendation(latest_entity, matches):
+    if not latest_entity:
         return "I need you to post a load or a truck first so I can analyze the market."
         
-    entity = context_data["latest_entity"]
-    if entity["type"] in ["truck", "truck_with_space"]:
-        return f"💡 **Decision Mode:** Demand in **{entity['start']}** is currently moderate. I recommend taking the **top match** immediately."
-    else:
-        return f"💡 **Decision Mode:** There is a surplus of trucks in **{entity['start']}**. You hold the leverage. You can negotiate for a **10% lower rate**."
+    if not matches:
+        if latest_entity["type"] in ["truck", "truck_with_space"]:
+            return f"💡 **Decision Mode:** No perfect matches yet. Demand in **{latest_entity.get('start', 'your area')}** is moderate. I recommend waiting 1 hour for optimal loads to surface."
+        else:
+            return f"💡 **Decision Mode:** There is a general surplus of trucks. Keep your posting open."
+
+    best_match = matches[0]
+    is_truck = latest_entity["type"] in ["truck", "truck_with_space"]
+    
+    opp = best_match["load"] if is_truck else best_match["truck"]
+    target_name = "load" if is_truck else "truck"
+    
+    target_route = f"{opp['start']} → {opp['destination']}"
+    self_route = f"{latest_entity['start']} → {latest_entity['destination']}"
+    
+    truck_str = target_route if not is_truck else self_route
+    load_str = target_route if is_truck else self_route
+    
+    reasons_text = "\n".join([f"{r}" for r in best_match["reasons"]])
+    
+    rec = f"💡 **BEST ACTION:**\n\nTake the **{target_route}** {target_name}\n\n"
+    rec += f"🚚 **Truck:** {truck_str}\n"
+    rec += f"📦 **Load:** {load_str}\n"
+    rec += f"📍 **Pickup Distance:** {best_match['dist_to_pickup']} km\n"
+    rec += f"🔥 **Match Score:** {best_match['score']}%\n\n"
+    rec += f"**Reason:**\n{reasons_text}"
+    
+    if len(matches) > 1:
+        rec += f"\n\n*(Also analyzed {len(matches)-1} other viable options, but this is the mathematically optimal choice)*"
+        
+    return rec

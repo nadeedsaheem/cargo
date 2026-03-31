@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from services.gemini import analyze_message
+from services.gemini import analyze_message, get_decision_recommendation
 from services.matcher import get_top_matches
 import logging
 from datetime import datetime
@@ -111,26 +111,11 @@ def decision():
     if not latest_entity:
         return jsonify({"recommendation": "I need you to post a load or a truck first so I can analyze the network."})
         
-    # Use Top Matches engine to find the objective best decision
-    top_matches = get_top_matches(latest_entity, db, limit=1)
+    # Inject Top Matches safely into the analytical engine format
+    top_matches = get_top_matches(latest_entity, db, limit=3)
+    rec = get_decision_recommendation(latest_entity, top_matches)
     
-    if top_matches:
-        match = top_matches[0]
-        opp = match["truck"] if latest_entity["type"] == "load" else match["load"]
-        target_name = "truck" if latest_entity["type"] == "load" else "cargo load"
-        
-        # Clean reasons into markdown list
-        reasons_text = "\n".join([f"* {r.replace('✔ ', '').replace('⚠️ ', '')}" for r in match["reasons"]])
-        
-        rec = f"💡 **BEST ACTION:**\nChoose THIS option: Take the **{opp['start']} → {opp['destination']}** {target_name}.\n\n**Reason:**\n{reasons_text}\n* Highest profit potential\n* Best route efficiency overall"
-        return jsonify({"recommendation": rec})
-    else:
-        # Fallback if no matching targets
-        if latest_entity["type"] in ["truck", "truck_with_space"]:
-            rec = f"💡 **Decision Mode:** No perfect matches yet. Demand in **{latest_entity.get('start', 'your area')}** is moderate. I recommend waiting 1 hour for optimal loads to surface."
-        else:
-            rec = f"💡 **Decision Mode:** There is a general surplus of trucks. Keep your posting open; you have the leverage to negotiate favorable rates."
-        return jsonify({"recommendation": rec})
+    return jsonify({"recommendation": rec})
 
 if __name__ == "__main__":
     seed_database()
