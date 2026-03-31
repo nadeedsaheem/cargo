@@ -24,7 +24,6 @@ See the `/proof` folder for console trace executions of Gemini seamlessly interc
 *(Add project screenshots here)*
 
 ![Dashboard GUI](proof/screenshot1.png)
-![Decision Engine Map](proof/screenshot2.png)
 
 
 ## Installation Steps
