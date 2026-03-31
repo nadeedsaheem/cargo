@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Logistics Chat Copilot V2</title>
+    <!-- Modern Font Family -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Top Status / Dashboard Bar -->
+    <header class="top-dashboard">
+        <div class="brand">
+            <i class="fa-solid fa-truck-fast"></i> AI Logistics Copilot
+        </div>
+        <div class="global-stats">
+            <div class="stat-pill"><i class="fa-solid fa-handshake"></i> <span id="dash-matches">0</span> Matches</div>
+            <div class="stat-pill profit-pill"><i class="fa-solid fa-indian-rupee-sign"></i> <span id="dash-profit">0</span> Profit</div>
+            <div class="stat-pill eco-pill"><i class="fa-solid fa-leaf"></i> <span id="dash-co2">0</span>kg CO₂ Saved</div>
+        </div>
+    </header>
+
+    <div class="app-container glass-container">
+        <!-- Main Chat Area -->
+        <main class="chat-wrapper">
+            <header class="chat-header">
+                <div class="user-selector">
+                    <label>Terminal:</label>
+                    <select id="sender-type">
+                        <option value="driver">🚚 Driver (Truck)</option>
+                        <option value="loader">📦 Loader (Cargo)</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" id="reset-btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 8px; padding: 8px 15px; cursor: pointer; transition: 0.3s; font-family: inherit;"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
+                    <button type="button" id="decision-btn" class="decision-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> What should I do?</button>
+                </div>
+            </header>
+
+            <div id="chat-messages" class="chat-messages">
+                <div class="message system">
+                    <div class="bubble glass-bubble">
+                        Welcome to the <b>V2 Premium Core</b>! 
+                        <br>Post a load or empty truck to see the AI Matching Engine in action.
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <form id="chat-form">
+                    <input type="text" id="message-input" placeholder="Type load details or routing requests..." autocomplete="off">
+                    <button type="submit" id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Sidebar / AI Insights Panel -->
+        <aside class="insights-panel">
+            <div class="panel-header">
+                <h2>AI Insights</h2>
+                <div class="status-indicator"><span class="pulse-dot"></span> System Nominal</div>
+            </div>
+            
+            <div id="ai-insights-content" class="insights-content">
+                <div class="empty-state">
+                    <i class="fa-solid fa-radar fa-spin-pulse"></i>
+                    <p>Awaiting routing data...</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Smart Slide-in Notification -->
+    <div id="smart-notification" class="smart-notification hidden">
+        <div class="notif-icon"><i class="fa-solid fa-bell"></i></div>
+        <div class="notif-body">
+            <h4 id="notif-title">Match Found</h4>
+            <p id="notif-desc">Connecting...</p>
+        </div>
+        <button type="button" id="notif-accept-btn" class="action-btn">Accept</button>
+        <button type="button" id="notif-close-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
