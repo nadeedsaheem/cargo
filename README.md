@@ -25,7 +25,8 @@ See the `/proof` folder for console trace executions of Gemini seamlessly interc
 
 ![Dashboard GUI](proof/screenshot1.png)
 
-
+video demo 
+https://drive.google.com/file/d/1UJvg31eE8YS9heD9uZG_Nl6FaZOaeU83/view?usp=drive_link
 ## Installation Steps
 ```bash
 # Clone the repository
