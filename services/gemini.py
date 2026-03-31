@@ -47,12 +47,12 @@ def rule_based_ai(message: str) -> dict:
     message_lower = message.lower()
     
     msg_type = "unknown"
-    if any(w in message_lower for w in ["empty truck", "empty with empty", "space available", "lorry"]):
+    # Strict Priority 1: User specifies empty or truck spaces
+    if any(w in message_lower for w in ["empty", "truck", "space", "available", "lorry"]):
         msg_type = "truck"
+    # Priority 2: Standard load request
     elif any(w in message_lower for w in ["load", "cargo", "goods", "freight", "material"]):
         msg_type = "load"
-    elif "empty" in message_lower or "truck" in message_lower:
-        msg_type = "truck" # Final fallback
         
     start = "Unknown"
     destination = "Unknown"
@@ -165,10 +165,7 @@ def get_decision_recommendation(latest_entity, matches):
         return "I need you to post a load or a truck first so I can analyze the market."
         
     if not matches:
-        if latest_entity["type"] in ["truck", "truck_with_space"]:
-            return f"💡 **Decision Mode:** No perfect matches yet. Demand in **{latest_entity.get('start', 'your area')}** is moderate. I recommend waiting 1 hour for optimal loads to surface."
-        else:
-            return f"💡 **Decision Mode:** There is a general surplus of trucks. Keep your posting open."
+        return f"💡 **BEST ACTION:**\n\nNo active compatible nodes found.\n\n**Reason:**\n✔ Searched entire database\n✔ 0 Matches generated\n\nI recommend waiting for new real-time data to arrive for {latest_entity.get('start', 'your area')}."
 
     best_match = matches[0]
     is_truck = latest_entity["type"] in ["truck", "truck_with_space"]
